@@ -44,17 +44,16 @@ export function Navbar() {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-3">
-              <Image
-                src="/images/triaxis-logo.png"
-                alt="TRI-AXIS Logo"
-                width={160}
-                height={60}
-                className="h-14 w-auto"
-                priority
-              />
-            </Link>
-
+   <Link href="/" className="flex items-center gap-3">
+  <Image
+    src="/images/triaxis-logo.png"
+    alt="TRI-AXIS Logo"
+    width={200}
+    height={80}
+    className="h-24 w-auto mt-3"
+    priority
+  />
+</Link>
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-1">
               {navItems.map((item) => (
