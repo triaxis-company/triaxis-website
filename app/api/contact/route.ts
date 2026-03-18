@@ -4,7 +4,32 @@ import nodemailer from "nodemailer"
 export async function POST(request: Request) {
   try {
     // ✅ Read form data (works for both contact + careers)
-    const formData = await request.formData()
+  let name, email, phone, message, company, service, position, file
+
+const contentType = request.headers.get("content-type")
+
+if (contentType?.includes("application/json")) {
+  // 🔹 CONTACT FORM (JSON)
+  const data = await request.json()
+
+  name = data.name
+  email = data.email
+  phone = data.phone
+  company = data.company
+  service = data.service
+  message = data.message
+
+} else {
+  // 🔹 CAREERS FORM (FormData)
+  const formData = await request.formData()
+
+  name = formData.get("name")
+  email = formData.get("email")
+  phone = formData.get("phone")
+  position = formData.get("position")
+  message = formData.get("message")
+  file = formData.get("cv") as File
+}
 
     const name = formData.get("name")
     const email = formData.get("email")
