@@ -81,18 +81,43 @@ export default function CareersPage() {
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [fileName, setFileName] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    
-    // Simulate submission
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    setFormData({ name: "", email: "", phone: "", position: "", message: "" })
-    setFileName("")
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault()
+  setIsSubmitting(true)
+
+  try {
+    const form = e.currentTarget
+    const data = new FormData()
+
+    data.append("name", formData.name)
+    data.append("email", formData.email)
+    data.append("phone", formData.phone)
+    data.append("position", formData.position)
+    data.append("message", formData.message)
+
+    const fileInput = form.querySelector("#cv") as HTMLInputElement
+    if (fileInput?.files?.[0]) {
+      data.append("cv", fileInput.files[0])
+    }
+
+    const res = await fetch("/api/contact", {
+      method: "POST",
+      body: data,
+    })
+
+    if (res.ok) {
+      setIsSubmitted(true)
+      setFormData({ name: "", email: "", phone: "", position: "", message: "" })
+      setFileName("")
+    } else {
+      alert("Failed ❌")
+    }
+  } catch (err) {
+    alert("Error ❌")
   }
+
+  setIsSubmitting(false)
+}
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -291,6 +316,7 @@ export default function CareersPage() {
                     </label>
                     <Input
                       id="name"
+                      name="name"
                       type="text"
                       required
                       value={formData.name}
@@ -303,7 +329,7 @@ export default function CareersPage() {
                       Email *
                     </label>
                     <Input
-                      id="email"
+                      id="email" name="email"
                       type="email"
                       required
                       value={formData.email}
@@ -319,7 +345,7 @@ export default function CareersPage() {
                       Phone Number *
                     </label>
                     <Input
-                      id="phone"
+                      id="phone" name="phone"
                       type="tel"
                       required
                       value={formData.phone}
@@ -332,7 +358,7 @@ export default function CareersPage() {
                       Position of Interest
                     </label>
                     <select
-                      id="position"
+                      id="position" name="position"
                       value={formData.position}
                       onChange={(e) => setFormData({ ...formData, position: e.target.value })}
                       className="w-full h-10 px-3 py-2 rounded-md border border-input bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-ring"
@@ -353,6 +379,7 @@ export default function CareersPage() {
                   <div className="relative">
                     <input
                       id="cv"
+                      name="cv" 
                       type="file"
                       accept=".pdf,.doc,.docx"
                       required
@@ -374,7 +401,7 @@ export default function CareersPage() {
                     Additional Information
                   </label>
                   <textarea
-                    id="message"
+                    id="message" name="message"
                     rows={4}
                     value={formData.message}
                     onChange={(e) => setFormData({ ...formData, message: e.target.value })}
