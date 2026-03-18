@@ -113,18 +113,22 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row gap-4"
           >
-            <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8">
+            <Button asChild size="lg" className="bg-white text-gray-900 border border-gray-300 hover:bg-black hover:text-white transition-all duration-300">
               <Link href="/services">
                 Explore Services
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
 
-            <Button asChild size="lg" variant="outline" className="border-gray-400 text-gray-900 hover:bg-gray-100 px-8">
-              <Link href="/contact">
-                Contact Us
-              </Link>
-            </Button>
+           <Button
+  asChild
+  size="lg"
+  className="bg-white text-gray-900 border border-gray-300 hover:bg-black hover:text-white transition-all duration-300"
+>
+  <Link href="/contact">
+    Contact Us
+  </Link>
+</Button>
           </motion.div>
         </div>
 
