@@ -1,5 +1,5 @@
 "use client"
-
+import PageHero from "@/components/common/PageHero"
 import { useState, Suspense } from "react"
 import Image from "next/image"
 import { useSearchParams } from "next/navigation"

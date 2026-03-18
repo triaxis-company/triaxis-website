@@ -1,5 +1,5 @@
 "use client"
-
+import PageHero from "@/components/common/PageHero"
 import { useState } from "react"
 import Image from "next/image"
 import { motion } from "framer-motion"
