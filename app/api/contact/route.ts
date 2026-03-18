@@ -3,52 +3,44 @@ import nodemailer from "nodemailer"
 
 export async function POST(request: Request) {
   try {
-    // ✅ Read form data (works for both contact + careers)
-  let name, email, phone, message, company, service, position, file
+    let name: any, email: any, phone: any, message: any
+    let company: any, service: any, position: any, file: any
 
-const contentType = request.headers.get("content-type")
+    // 🔍 Detect request type
+    const contentType = request.headers.get("content-type")
 
-if (contentType?.includes("application/json")) {
-  // 🔹 CONTACT FORM (JSON)
-  const data = await request.json()
+    if (contentType?.includes("application/json")) {
+      // =========================
+      // 📩 CONTACT FORM (JSON)
+      // =========================
+      const data = await request.json()
 
-  name = data.name
-  email = data.email
-  phone = data.phone
-  company = data.company
-  service = data.service
-  message = data.message
+      name = data.name
+      email = data.email
+      phone = data.phone
+      company = data.company
+      service = data.service
+      message = data.message
 
-} else {
-  // 🔹 CAREERS FORM (FormData)
-  const formData = await request.formData()
+    } else {
+      // =========================
+      // 📄 CAREERS FORM (FormData)
+      // =========================
+      const formData = await request.formData()
 
-  name = formData.get("name")
-  email = formData.get("email")
-  phone = formData.get("phone")
-  position = formData.get("position")
-  message = formData.get("message")
-  file = formData.get("cv") as File
-}
-
-    const name = formData.get("name")
-    const email = formData.get("email")
-    const phone = formData.get("phone")
-    const message = formData.get("message")
-
-    // Contact form fields
-    const company = formData.get("company")
-    const service = formData.get("service")
-
-    // Careers form fields
-    const position = formData.get("position")
-    const file = formData.get("cv") as File
+      name = formData.get("name")
+      email = formData.get("email")
+      phone = formData.get("phone")
+      position = formData.get("position")
+      message = formData.get("message")
+      file = formData.get("cv")
+    }
 
     // ✅ Detect form type
     const isCareer = !!position
 
     // =========================
-    // 📊 GOOGLE SHEET SAVE
+    // 📊 SAVE TO GOOGLE SHEET
     // =========================
     await fetch(
       "https://script.google.com/macros/s/AKfycbwb-wCbOmdU-8odsXprxSJwCbzujfyddkwLpD_XWGBzNcGlmCDiDU7mk96XT588NEw9nQ/exec",
@@ -82,11 +74,11 @@ if (contentType?.includes("application/json")) {
     })
 
     // =========================
-    // 📎 FILE ATTACHMENT (CV)
+    // 📎 ATTACH CV (ONLY CAREERS)
     // =========================
     let attachments: any[] = []
 
-    if (file && file.size > 0) {
+    if (file && typeof file !== "string") {
       const bytes = await file.arrayBuffer()
       const buffer = Buffer.from(bytes)
 
@@ -134,6 +126,7 @@ if (contentType?.includes("application/json")) {
     })
 
     return NextResponse.json({ success: true })
+
   } catch (error) {
     console.error("ERROR:", error)
     return NextResponse.json({ success: false }, { status: 500 })
