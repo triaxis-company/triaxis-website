@@ -3,46 +3,92 @@ import nodemailer from "nodemailer"
 
 export async function POST(request: Request) {
   try {
-    // 1️⃣ Read form data
-    const data = await request.json()
-    const { name, company, phone, email, service, message } = data
+    // ✅ Read form data (works for both contact + careers)
+    const formData = await request.formData()
 
-    // 2️⃣ Save to Google Sheets
+    const name = formData.get("name")
+    const email = formData.get("email")
+    const phone = formData.get("phone")
+    const message = formData.get("message")
+
+    // Contact form fields
+    const company = formData.get("company")
+    const service = formData.get("service")
+
+    // Careers form fields
+    const position = formData.get("position")
+    const file = formData.get("cv") as File
+
+    // ✅ Detect form type
+    const isCareer = !!position
+
+    // =========================
+    // 📊 GOOGLE SHEET SAVE
+    // =========================
     await fetch(
       "https://script.google.com/macros/s/AKfycbwb-wCbOmdU-8odsXprxSJwCbzujfyddkwLpD_XWGBzNcGlmCDiDU7mk96XT588NEw9nQ/exec",
       {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({
+          type: isCareer ? "CAREER" : "CONTACT",
           name,
-          company,
-          phone,
           email,
+          phone,
+          company,
           service,
-          message
-        })
+          position,
+          message,
+        }),
       }
     )
 
-    // 3️⃣ Configure email transporter (Gmail)
+    // =========================
+    // 📧 EMAIL SETUP
+    // =========================
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS
-      }
+        pass: process.env.EMAIL_PASS,
+      },
     })
 
-    // 4️⃣ Send notification email
-    await transporter.sendMail({
-      from: `TriAxis Website <${process.env.EMAIL_USER}>`,
-      to: "sales@triaxis.sa, triaxis.ksa@gmail.com",
-      subject: "New Website Enquiry",
-      html: `
-        <h3>New Contact Form Submission</h3>
+    // =========================
+    // 📎 FILE ATTACHMENT (CV)
+    // =========================
+    let attachments: any[] = []
 
+    if (file && file.size > 0) {
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+
+      attachments.push({
+        filename: file.name,
+        content: buffer,
+      })
+    }
+
+    // =========================
+    // ✉️ EMAIL CONTENT
+    // =========================
+    const subject = isCareer
+      ? `New Job Application - ${position}`
+      : `New Website Enquiry`
+
+    const html = isCareer
+      ? `
+        <h2>New Job Application</h2>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Phone:</b> ${phone}</p>
+        <p><b>Position:</b> ${position}</p>
+        <p><b>Message:</b> ${message}</p>
+      `
+      : `
+        <h2>New Contact Enquiry</h2>
         <p><b>Name:</b> ${name}</p>
         <p><b>Email:</b> ${email}</p>
         <p><b>Phone:</b> ${phone}</p>
@@ -50,11 +96,21 @@ export async function POST(request: Request) {
         <p><b>Service:</b> ${service}</p>
         <p><b>Message:</b> ${message}</p>
       `
+
+    // =========================
+    // 🚀 SEND EMAIL
+    // =========================
+    await transporter.sendMail({
+      from: `TriAxis Website <${process.env.EMAIL_USER}>`,
+      to: ["sales@triaxis.sa", "triaxis.ksa@gmail.com"],
+      subject,
+      html,
+      attachments,
     })
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error("CONTACT ERROR:", error)
+    console.error("ERROR:", error)
     return NextResponse.json({ success: false }, { status: 500 })
   }
 }
