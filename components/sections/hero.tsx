@@ -48,7 +48,8 @@ function AnimatedCounter({ value, suffix }: { value: number; suffix: string }) {
 export function HeroSection() {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Image with Overlay */}
+      
+      {/* Background Image (NO BLUE OVERLAY) */}
       <div className="absolute inset-0 z-0">
         <Image
           src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=2940"
@@ -57,8 +58,9 @@ export function HeroSection() {
           className="object-cover"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-primary/95 via-primary/80 to-primary/60" />
-        <div className="absolute inset-0 bg-gradient-to-t from-primary/90 via-transparent to-primary/40" />
+
+        {/* Light white overlay for readability */}
+        <div className="absolute inset-0 bg-white/70" />
       </div>
 
       {/* Watermark Logo */}
@@ -76,12 +78,13 @@ export function HeroSection() {
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-32 pb-20">
         <div className="max-w-4xl">
+
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="inline-block px-4 py-2 rounded-full bg-accent/20 text-accent-foreground text-sm font-medium mb-6 border border-accent/30">
+            <span className="inline-block px-4 py-2 rounded-full bg-gray-200 text-gray-800 text-sm font-medium mb-6 border border-gray-300">
               Strength, Quality, and Commitment
             </span>
           </motion.div>
@@ -90,7 +93,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-primary-foreground leading-tight tracking-tight text-balance"
+            className="text-4xl sm:text-5xl lg:text-6xl xl:text-7xl font-bold text-gray-900 leading-tight tracking-tight"
           >
             Integrated Industrial & Construction Support Services
           </motion.h1>
@@ -99,7 +102,7 @@ export function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mt-6 text-lg sm:text-xl text-primary-foreground/80 max-w-2xl leading-relaxed"
+            className="mt-6 text-lg sm:text-xl text-gray-700 max-w-2xl leading-relaxed"
           >
             Tri Axis Company delivers reliable engineering, construction, and industrial support services across Saudi Arabia.
           </motion.p>
@@ -110,13 +113,14 @@ export function HeroSection() {
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mt-10 flex flex-col sm:flex-row gap-4"
           >
-            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 text-accent-foreground text-base px-8">
+            <Button asChild size="lg" className="bg-black text-white hover:bg-gray-800 px-8">
               <Link href="/services">
                 Explore Services
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
-            <Button asChild size="lg" variant="outline" className="border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10 text-base px-8">
+
+            <Button asChild size="lg" variant="outline" className="border-gray-400 text-gray-900 hover:bg-gray-100 px-8">
               <Link href="/contact">
                 Contact Us
               </Link>
@@ -131,15 +135,15 @@ export function HeroSection() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-8"
         >
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <div
               key={stat.label}
-              className="text-center p-6 rounded-2xl bg-primary-foreground/5 backdrop-blur-sm border border-primary-foreground/10"
+              className="text-center p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-200"
             >
-              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-primary-foreground">
+              <div className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900">
                 <AnimatedCounter value={stat.value} suffix={stat.suffix} />
               </div>
-              <div className="mt-2 text-sm text-primary-foreground/70">{stat.label}</div>
+              <div className="mt-2 text-sm text-gray-600">{stat.label}</div>
             </div>
           ))}
         </motion.div>
@@ -155,7 +159,7 @@ export function HeroSection() {
         <motion.div
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 1.5 }}
-          className="flex flex-col items-center text-primary-foreground/60"
+          className="flex flex-col items-center text-gray-600"
         >
           <span className="text-sm mb-2">Scroll to explore</span>
           <ChevronDown size={24} />
